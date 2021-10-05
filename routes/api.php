@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\QuestionController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +15,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+/* Auth */
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout']);
+
+/* Login user */
+Route::prefix('test')
+    ->middleware(['auth:sanctum', 'checksinglesession'])
+    ->group(function (){
+        // Profile
+        Route::get('/profile', function (Request $request){
+            return $request->user();
+        });
+        // Question math
+        Route::get('/math', [QuestionController::class, 'math']);
+    }
+);

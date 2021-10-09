@@ -21,20 +21,10 @@ class QuestionController extends Controller
             ->where('variant_id', $variant->id)
             ->get();
 
-        return response(["questions" => $questions], 200);
+        return response(["questions" => $questions, "variant_id" => $variant->id], 200);
     }
 
-    public function math()
-    {
-        $questions = Question::where('subject_id', 1)
-            ->with('answers:id,answer,question_id')
-            ->select('id', 'question', 'subject_id')
-            ->get();
-
-        return response(['questions' => $questions], 200);
-    }
-
-    public function endTest(Request $request)
+    public function store(Request $request)
     {
         $answers = $request->answers;
         $variant = $request->variant;
@@ -59,7 +49,6 @@ class QuestionController extends Controller
         $questions = Question::where('variant_id', $variant)->where('subject_id', $subject)->with('correctAnswers')->get(); // questions from certain variant
 
         foreach ($questions as $question) {
-
             $answersUser = AnswersUser::where('user_id', 1)
                                         ->where('variant_id', $variant)
                                         ->where('question_id', $question->id)
@@ -76,7 +65,7 @@ class QuestionController extends Controller
             foreach ($answersUser as $answerUser) {
                 if ($question->correctAnswers->contains(function ($value) use ($answerUser) {
                     return $value->id == $answerUser->answer_id;
-                })){
+                })) {
                     $data[$last_key]['correct'] += 1;
                 } else {
                     $data[$last_key]['incorrect'] += 1;
@@ -86,7 +75,7 @@ class QuestionController extends Controller
             $procent = $data[$last_key]['correct'] / count($question->correctAnswers) * 100;
 
             $bal = 0;
-            if ($procent >= 50 ) {
+            if ($procent >= 50) {
                 $bal = 1;
             }
 

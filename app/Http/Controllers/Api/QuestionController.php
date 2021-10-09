@@ -41,43 +41,46 @@ class QuestionController extends Controller
     public function checkTest(Request $request)
     {
         $data = [];
-        $user = Auth::user();
         $variant = $request->variant; // 1
         $subject   = $request->subject;
         $questions = Question::where('variant_id', $variant)->where('subject_id', $subject)->with('correctAnswers')->get(); // questions from certain variant
 
         foreach ($questions as $question) {
-            $answersUser = AnswersUser::where('user_id', Auth::user()->id)
+
+            $answersUser = AnswersUser::where('user_id', 1)
                                         ->where('variant_id', $variant)
                                         ->where('question_id', $question->id)
                                         ->get();
             $data[] = [
-                'question' => $question->question,
+                'question' => $question->id,
                 'correct' => 0,
                 'incorrect' => 0,
                 'bal' => 0
             ];
 
+            $last_key = array_key_last($data);
+
             foreach ($answersUser as $answerUser) {
-                if ($question->correctAnswers->contains(function ($value, $key) use ($answerUser) {
+                if ($question->correctAnswers->contains(function ($value) use ($answerUser) {
                     return $value->id == $answerUser->answer_id;
-                })) {
-                    end($data)['correct'] += 1;
+                })){
+                    $data[$last_key]['correct'] += 1;
                 } else {
-                    end($data)['incorrect'] += 1;
+                    $data[$last_key]['incorrect'] += 1;
                 }
             }
 
-            $procent = end($data)['correct'] / count($question->correctAnswers) * 100;
+            $procent = $data[$last_key]['correct'] / count($question->correctAnswers) * 100;
 
             $bal = 0;
-            if ($procent >= 50) {
+            if ($procent >= 50 ) {
                 $bal = 1;
             }
-            if (end($data)['incorrect'] = 0 && count($question->correctAnswers) > 1 && $procent == 100) {
+
+            if ($data[$last_key]['incorrect'] == 0 && count($question->correctAnswers) > 1 && $procent == 100) {
                 $bal = 2;
             }
-            end($data)['bal'] = $bal;
+            $data[$last_key]['bal'] = $bal;
         }
 
         return response(["answers" => $data], 200);

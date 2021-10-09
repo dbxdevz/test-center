@@ -26,8 +26,7 @@ class AddVariantIdToQuestionsTable extends Migration
     public function down()
     {
         Schema::table('questions', function (Blueprint $table) {
-            $table->dropForeign('variant_id');
-            $table->dropColumn('variant_id');
+            $table->dropForeign(['variant_id']);
         });
     }
 }

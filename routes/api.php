@@ -19,6 +19,8 @@ use App\Http\Controllers\Api\QuestionController;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 
+Route::post('/end-test', [QuestionController::class, 'endTest']);
+Route::post('/check-test', [QuestionController::class, 'checkTest']);
 /* Login user */
 Route::prefix('test')
     ->middleware(['auth:sanctum', 'checksinglesession'])
@@ -29,5 +31,6 @@ Route::prefix('test')
         });
         // Question math
         Route::get('/math', [QuestionController::class, 'math']);
+
     }
 );

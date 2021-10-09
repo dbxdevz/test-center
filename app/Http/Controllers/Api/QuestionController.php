@@ -14,10 +14,14 @@ class QuestionController extends Controller
 {
     public function index(Request $request)
     {
-        $variant = rand(1, Variant::count());
-        $questions = Question::where('subject_id', $request->subject)->where('variant_id', $variant)->get();
+        $variant = Variant::inRandomOrder()->first();
+        $questions = Question::where('subject_id', $request->subject)
+            ->with('answers:id,answer,question_id')
+            ->select('id', 'question')
+            ->where('variant_id', $variant->id)
+            ->get();
 
-        return response(["questions" => $questions], 200);
+        return response(["questions" => $questions, "variant_id" => $variant->id], 200);
     }
 
     public function math()

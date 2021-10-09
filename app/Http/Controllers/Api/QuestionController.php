@@ -21,7 +21,7 @@ class QuestionController extends Controller
             ->where('variant_id', $variant->id)
             ->get();
 
-        return response(["questions" => $questions], 200);
+        return response(["questions" => $questions, "variant_id" => $variant->id], 200);
     }
 
     public function math()

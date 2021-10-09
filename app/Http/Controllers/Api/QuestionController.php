@@ -13,8 +13,7 @@ class QuestionController extends Controller
 {
     public function math()
     {
-        $questions = Question
-            ::where('subject_id', 1)
+        $questions = Question::where('subject_id', 1)
             ->with('answers:id,answer,question_id')
             ->select('id', 'question', 'subject_id')
             ->get();
@@ -28,7 +27,7 @@ class QuestionController extends Controller
         $variant = $request->variant;
 
         foreach ($answers as $answer) {
-            AnswersUser::create([
+            AnswersUser::createOrUpdate(['user_id' => 1, 'variant_id' => $variant], [
                 'user_id' => 1,
                 'answer_id' => $answer['answer'],
                 'question_id' => $answer['question'],
@@ -41,57 +40,45 @@ class QuestionController extends Controller
 
     public function checkTest(Request $request)
     {
-        $variant = $request->variant;
         $data = [];
-        $questions = Question::where('variant_id', $variant)->get();
+        $user = Auth::user();
+        $variant = $request->variant; // 1
+        $subject   = $request->subject;
+        $questions = Question::where('variant_id', $variant)->where('subject_id', $subject)->with('correctAnswers')->get(); // questions from certain variant
 
         foreach ($questions as $question) {
+            $answersUser = AnswersUser::where('user_id', Auth::user()->id)
+                                        ->where('variant_id', $variant)
+                                        ->where('question_id', $question->id)
+                                        ->get();
+            $data[] = [
+                'question' => $question->question,
+                'correct' => 0,
+                'incorrect' => 0,
+                'bal' => 0
+            ];
 
-            $correctAnswers = Answer::where('question_id', $question->id)->where('correct', true)->get();
-
-            $oneCorrectAnswers = $correctAnswers;
-            $twoCorrectAnswers = $correctAnswers;
-
-            if (count($oneCorrectAnswers) >= 2) {
-                foreach ($oneCorrectAnswers as $correctAnswer) {
-                    $oneCorrectAnswers = $oneCorrectAnswers->except([$correctAnswer->id]);
+            foreach ($answersUser as $answerUser) {
+                if ($question->correctAnswers->contains(function ($value, $key) use ($answerUser) {
+                    return $value->id == $answerUser->answer_id;
+                })) {
+                    end($data)['correct'] += 1;
+                } else {
+                    end($data)['incorrect'] += 1;
                 }
             }
 
-            if(count($twoCorrectAnswers) == 1){
-                foreach ($twoCorrectAnswers as $correctAnswer) {
-                    $twoCorrectAnswers = $twoCorrectAnswers->except($correctAnswer->id);
-                }
-            }
+            $procent = end($data)['correct'] / count($question->correctAnswers) * 100;
 
-
-            if ($oneCorrectAnswers) {
-                foreach ($oneCorrectAnswers as $correctAnswer) {
-                    $answersUser = AnswersUser::where('user_id', 1)->where('variant_id', $variant)->where('question_id', $correctAnswer->question_id)->first();
-                    if ($answersUser->answer_id == $correctAnswer->id) {
-                        $data [] = [
-                            'question' => $correctAnswer->question_id,
-                            'answer' => true,
-                        ];
-                    } else {
-                        $data[] = [
-                            'question' => $answersUser->question_id,
-                            'answer' => false,
-                        ];
-                    }
-                }
+            $bal = 0;
+            if ($procent >= 50) {
+                $bal = 1;
             }
-            if ($twoCorrectAnswers){
-                foreach ($twoCorrectAnswers as $correctAnswer){
-                    $answersUser = AnswersUser::where('user_id', 1)->where('variant_id', $variant)->where('question_id', $correctAnswer->question_id)->get();
-                }
-                $data [] = [
-                    'question' => '2 answer',
-                    'answer' => true
-                ];
+            if (end($data)['incorrect'] = 0 && count($question->correctAnswers) > 1 && $procent == 100) {
+                $bal = 2;
             }
+            end($data)['bal'] = $bal;
         }
-
 
         return response(["answers" => $data], 200);
     }

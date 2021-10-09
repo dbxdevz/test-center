@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\QuestionController;
+use App\Http\Controllers\Api\SubjectController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,6 +33,6 @@ Route::prefix('test')
         });
         // Question math
         Route::get('/math', [QuestionController::class, 'math']);
-
+        Route::get("/subjects", [SubjectController::class, 'index']);
     }
 );

@@ -23,6 +23,9 @@ Route::post('logout', [AuthController::class, 'logout']);
 
 Route::post('/end-test', [QuestionController::class, 'endTest']);
 Route::post('/check-test', [QuestionController::class, 'checkTest']);
+Route::get("/subjects", [SubjectController::class, 'index']);
+Route::get('/{subject}/questions', [QuestionController::class, 'index']);
+
 /* Login user */
 Route::prefix('test')
     ->middleware(['auth:sanctum', 'checksinglesession'])
@@ -34,6 +37,5 @@ Route::prefix('test')
         });
         // Question math
         Route::get('/math', [QuestionController::class, 'math']);
-        Route::get("/subjects", [SubjectController::class, 'index']);
     }
     );

@@ -6,11 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\AnswersUser;
 use App\Models\Question;
+use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
+    public function index(Request $request)
+    {
+        $variant = rand(1, Variant::count());
+        $questions = Question::where('subject_id', $request->subject)->where('variant_id', $variant)->get();
+
+        return response(["questions" => $questions], 200);
+    }
+
     public function math()
     {
         $questions = Question::where('subject_id', 1)

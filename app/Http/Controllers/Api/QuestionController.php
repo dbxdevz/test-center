@@ -24,7 +24,7 @@ class QuestionController extends Controller
         return response(["questions" => $questions, "variant_id" => $variant->id], 200);
     }
 
-    public function store(Request $request)
+    public function endTest(Request $request)
     {
         $answers = $request->answers;
         $variant = $request->variant;
@@ -44,9 +44,12 @@ class QuestionController extends Controller
     public function checkTest(Request $request)
     {
         $data = [];
-        $variant = $request->variant; // 1
+        $variant = $request->variant;
         $subject   = $request->subject;
-        $questions = Question::where('variant_id', $variant)->where('subject_id', $subject)->with('correctAnswers')->get(); // questions from certain variant
+        $questions = Question::where('variant_id', $variant)
+            ->where('subject_id', $subject)
+            ->with('answers')
+            ->get();
 
         foreach ($questions as $question) {
             $answersUser = AnswersUser::where('user_id', 1)
@@ -72,17 +75,12 @@ class QuestionController extends Controller
                 }
             }
 
-            $procent = $data[$last_key]['correct'] / count($question->correctAnswers) * 100;
-
-            $bal = 0;
-            if ($procent >= 50) {
-                $bal = 1;
-            }
-
-            if ($data[$last_key]['incorrect'] == 0 && count($question->correctAnswers) > 1 && $procent == 100) {
-                $bal = 2;
-            }
-            $data[$last_key]['bal'] = $bal;
+            /*
+            incorrect > 1                   then 0
+            incorrect = 1
+                ???
+            incorrect = 0 && correct = *    then 2
+            */
         }
 
         return response(["answers" => $data], 200);

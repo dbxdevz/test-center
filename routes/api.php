@@ -26,13 +26,14 @@ Route::post('/check-test', [QuestionController::class, 'checkTest']);
 /* Login user */
 Route::prefix('test')
     ->middleware(['auth:sanctum', 'checksinglesession'])
-    ->group(function (){
+    ->group(
+        function () {
         // Profile
-        Route::get('/profile', function (Request $request){
+        Route::get('/profile', function (Request $request) {
             return $request->user();
         });
         // Question math
         Route::get('/math', [QuestionController::class, 'math']);
         Route::get("/subjects", [SubjectController::class, 'index']);
     }
-);
+    );

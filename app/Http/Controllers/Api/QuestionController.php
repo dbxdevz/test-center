@@ -24,7 +24,7 @@ class QuestionController extends Controller
         return response(["questions" => $questions, "variant_id" => $variant->id], 200);
     }
 
-    public function endTest(Request $request)
+    public function store(Request $request)
     {
         $answers = $request->answers;
         $variant = $request->variant;

@@ -48,7 +48,7 @@ class QuestionController extends Controller
         $subject   = $request->subject;
         $questions = Question::where('variant_id', $variant)
             ->where('subject_id', $subject)
-            ->with('answers')
+            ->with('correctAnswers')
             ->get();
 
         foreach ($questions as $question) {
@@ -75,12 +75,12 @@ class QuestionController extends Controller
                 }
             }
 
-            /*
-            incorrect > 1                   then 0
-            incorrect = 1
-                ???
-            incorrect = 0 && correct = *    then 2
-            */
+            $correct_procent = $data[$last_key]['correct'] / $questions->correctAnswers->count() * 100;
+            if ($data[$last_key]['incorrect'] == 0 && $correct_procent == 100) {
+                $data[$last_key]['bal'] = 2;
+            } elseif ($data[$last_key]['incorrect'] <= 1 && $correct_procent >= 50) {
+                $data[$last_key]['bal'] = 1;
+            }
         }
 
         return response(["answers" => $data], 200);

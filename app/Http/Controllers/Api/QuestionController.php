@@ -56,7 +56,9 @@ class QuestionController extends Controller
                                         ->where('variant_id', $variant)
                                         ->where('question_id', $question->id)
                                         ->get();
-            $total_bals += $question->answers->count() > 5 ? 2 : 1;
+
+            $total_bals += ($question->bal) ? 1 : 2;
+
             $data[] = [
                 'question' => $question->id,
                 'correct' => 0,
@@ -77,9 +79,13 @@ class QuestionController extends Controller
             }
 
             $correct_procent = $data[$last_key]['correct'] / $question->correctAnswers->count() * 100;
+
             if ($data[$last_key]['incorrect'] == 0 && $correct_procent == 100) {
                 $data[$last_key]['bal'] = 2;
             } elseif ($data[$last_key]['incorrect'] <= 1 && $correct_procent >= 50) {
+                $data[$last_key]['bal'] = 1;
+            }
+            if($data[$last_key]['bal'] == 2 && $question->bal == 1){
                 $data[$last_key]['bal'] = 1;
             }
         }

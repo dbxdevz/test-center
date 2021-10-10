@@ -160,7 +160,8 @@
                 var check = document.createElement("input");
                 input.type = "textarea";
                 input.name = "member" + i;
-                check.type = "checkbox"
+                if(bal2){check.type = "radio"}
+                if(bal1){check.type = "checkbox"}
                 check.name = "answer" + i;
 
                 var additionalConfig = {

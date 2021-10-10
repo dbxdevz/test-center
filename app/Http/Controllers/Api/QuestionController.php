@@ -50,12 +50,13 @@ class QuestionController extends Controller
             ->where('subject_id', $subject)
             ->with('correctAnswers')
             ->get();
-
+        $total_bals = 0;
         foreach ($questions as $question) {
             $answersUser = AnswersUser::where('user_id', 1)
                                         ->where('variant_id', $variant)
                                         ->where('question_id', $question->id)
                                         ->get();
+            $total_bals += $question->answers->count() > 5 ? 2 : 1;
             $data[] = [
                 'question' => $question->id,
                 'correct' => 0,
@@ -75,7 +76,7 @@ class QuestionController extends Controller
                 }
             }
 
-            $correct_procent = $data[$last_key]['correct'] / $questions->correctAnswers->count() * 100;
+            $correct_procent = $data[$last_key]['correct'] / $question->correctAnswers->count() * 100;
             if ($data[$last_key]['incorrect'] == 0 && $correct_procent == 100) {
                 $data[$last_key]['bal'] = 2;
             } elseif ($data[$last_key]['incorrect'] <= 1 && $correct_procent >= 50) {
@@ -83,6 +84,8 @@ class QuestionController extends Controller
             }
         }
 
-        return response(["answers" => $data], 200);
+        $bals = array_sum(array_column($data, 'bal'));
+
+        return response(['result' => $data, 'bals' =>$bals, 'total_bals' => $total_bals], 200);
     }
 }

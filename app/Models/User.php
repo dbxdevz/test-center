@@ -22,6 +22,10 @@ class User extends \TCG\Voyager\Models\User
         'email',
         'password',
         'session_id',
+        'school_id',
+        'phone_number',
+        'middle_name',
+        'last_name',
     ];
 
     /**
@@ -42,4 +46,9 @@ class User extends \TCG\Voyager\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class);
+    }
 }

@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\AnswersUser;
 use App\Models\Question;
+use App\Models\Result;
+use App\Models\Statistic;
+use App\Models\Subject;
 use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +29,7 @@ class QuestionController extends Controller
 
     public function endTest(Request $request)
     {
+
         $answers = $request->answers;
         $variant = $request->variant;
 
@@ -45,7 +49,7 @@ class QuestionController extends Controller
     {
         $data = [];
         $variant = $request->variant;
-        $subject   = $request->subject;
+        $subject = $request->subject;
         $questions = Question::where('variant_id', $variant)
             ->where('subject_id', $subject)
             ->with('correctAnswers')
@@ -53,9 +57,9 @@ class QuestionController extends Controller
         $total_bals = 0;
         foreach ($questions as $question) {
             $answersUser = AnswersUser::where('user_id', 1)
-                                        ->where('variant_id', $variant)
-                                        ->where('question_id', $question->id)
-                                        ->get();
+                ->where('variant_id', $variant)
+                ->where('question_id', $question->id)
+                ->get();
 
             $total_bals += ($question->bal) ? 1 : 2;
 
@@ -85,13 +89,93 @@ class QuestionController extends Controller
             } elseif ($data[$last_key]['incorrect'] <= 1 && $correct_procent >= 50) {
                 $data[$last_key]['bal'] = 1;
             }
-            if($data[$last_key]['bal'] == 2 && $question->bal == 1){
+            if ($data[$last_key]['bal'] == 2 && $question->bal == 1) {
                 $data[$last_key]['bal'] = 1;
             }
         }
 
         $bals = array_sum(array_column($data, 'bal'));
 
-        return response(['result' => $data, 'bals' =>$bals, 'total_bals' => $total_bals], 200);
+        $result = Result::where('user_id', 1)
+            ->where('subject_id', $subject)
+            ->where('variant_id', $variant)
+            ->first();
+        if (!$result) {
+            $typeSubject = Subject::where('id', $subject)->first();
+            if($typeSubject->first){
+                $subjectType = "first";
+            }else if($typeSubject->second){
+                $subjectType = "second";
+            }else{
+                $subjectType = "third";
+            }
+            $percent = (($bals / $total_bals) * 100) + 3; // 3 -> attempts
+            Result::create([
+                'user_id' => 1,
+                'subject_id' => $subject,
+                'variant_id' => $variant,
+                'data' => json_encode($data),
+                'bal' => $bals,
+                'total_bals' => $total_bals,
+                'attempts' => 2,
+                'percent' => $percent,
+                'type' => $subjectType,
+            ]);
+        }else{
+            if ($result->attempts > 0) {
+                $percent = ($bals / $total_bals * 100) + $result->attempts;
+                $attempt = $result->attempts;
+
+                if($result->percent <= $percent){
+                    $result->update([
+                        'data' => $data,
+                        'bal' => $bals,
+                        'total_bals' => $total_bals,
+                        'percent' => $percent
+                    ]);
+                }
+
+                $result->attempts = $attempt - 1;
+                $result->save();
+            } else {
+                return response([
+                    'message' => 'This attempt is not counted',
+                    'result' => $data,
+                    'bals' => $bals,
+                    'total_bals' => $total_bals
+                ], 200);
+            }
+        }
+
+        $subject = Subject::where('id', $subject)->first();
+        if($subject->first){
+            $subject = "first";
+        }else if($subject->second){
+            $subject = "second";
+        }else{
+            $subject = "third";
+        }
+        $statPercent = 0;
+
+        $percents = Result::where('user_id', 1)->where('type', $subject)->select('id','percent')->get();
+        foreach ($percents as $percent){
+            $statPercent += $percent->percent;
+        }
+
+        $counter = $percents->count();
+        $bronze = (int)($counter / 5);
+        $silver = (int)($bronze / 10);
+        $gold = (int)($silver / 5);
+        $bronze -= $silver * 10;
+        $silver -= $gold * 5;
+
+        Statistic::updateOrCreate(['user_id' => 1, 'type' => $subject], [
+            'percent' => $statPercent,
+            'bronze' => $bronze,
+            'silver' => $silver,
+            'gold' => $gold,
+        ]);
+
+        return response(['result' => $data, 'bals' => $bals, 'total_bals' => $total_bals], 200);
     }
 }

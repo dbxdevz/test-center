@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\SubjectController;
+use App\Http\Controllers\Api\SchoolController;
+use App\Http\Controllers\Api\ResultController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -26,9 +29,16 @@ Route::post('/check-test', [QuestionController::class, 'checkTest']);
 Route::get("/subjects", [SubjectController::class, 'index']);
 Route::get('/{subject}/questions', [QuestionController::class, 'index']);
 
+Route::get('schools', [SchoolController::class, 'index']);
+Route::get('schools/search', [SchoolController::class, 'search']);
+
+Route::post('register', [AuthController::class, 'register']);
+
+Route::get('result', [ResultController::class, 'index']);
+
 /* Login user */
 Route::prefix('test')
-    ->middleware(['auth:sanctum', 'checksinglesession'])
+    ->middleware(['auth:sanctum'])
     ->group(
         function () {
         // Profile

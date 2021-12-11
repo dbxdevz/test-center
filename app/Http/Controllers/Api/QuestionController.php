@@ -29,12 +29,12 @@ class QuestionController extends Controller
         $variant = Variant::inRandomOrder()->first();
 
         $questions = Question::where('subject_id', $request->subject)
+            ->where('variant_id', $variant->id)
             ->with('answers:id,answer,question_id')
             ->select('id', 'question')
-            ->where('variant_id', $variant->id)
             ->get();
 
-        return response(["questions" => $questions, "variant_id" => $variant->id], 200);
+        return response(["questions" => $questions, "variant_id" => $variant->id, "subject" => $request->subject], 200);
     }
 
     public function endTest(Request $request)
@@ -46,17 +46,18 @@ class QuestionController extends Controller
 
         $answers = $request->answers;
         $variant = $request->variant;
+        $subject = $request->subject;
 
         foreach ($answers as $answer) {
-            AnswersUser::createOrUpdate(['user_id' => 1, 'variant_id' => $variant], [
-                'user_id' => 1,
+            AnswersUser::createOrUpdate(['user_id' => auth('sanctum')->id(), 'variant_id' => $variant], [
+                'user_id' => auth('sanctum')->id(),
                 'answer_id' => $answer['answer'],
                 'question_id' => $answer['question'],
                 'variant_id' => $variant,
             ]);
         }
 
-        return response(['message' => 'successfully saved answers'], 200);
+        return response(['message' => 'successfully saved answers', 'variant' => $variant, 'subject' => $subject], 200);
     }
 
     public function checkTest(Request $request)
@@ -70,7 +71,7 @@ class QuestionController extends Controller
             ->get();
         $total_bals = 0;
         foreach ($questions as $question) {
-            $answersUser = AnswersUser::where('user_id', 1)
+            $answersUser = AnswersUser::where('user_id', auth('sanctum')->id())
                 ->where('variant_id', $variant)
                 ->where('question_id', $question->id)
                 ->get();
@@ -110,7 +111,7 @@ class QuestionController extends Controller
 
         $bals = array_sum(array_column($data, 'bal'));
 
-        $result = Result::where('user_id', 1)
+        $result = Result::where('user_id', auth('sanctum')->id())
             ->where('subject_id', $subject)
             ->where('variant_id', $variant)
             ->first();
@@ -125,7 +126,7 @@ class QuestionController extends Controller
             }
             $percent = (($bals / $total_bals) * 100) + 3; // 3 -> attempts
             Result::create([
-                'user_id' => 1,
+                'user_id' => auth('sanctum')->id(),
                 'subject_id' => $subject,
                 'variant_id' => $variant,
                 'data' => json_encode($data),

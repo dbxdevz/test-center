@@ -28,7 +28,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/end-test', [QuestionController::class, 'endTest']);
 Route::post('/check-test', [QuestionController::class, 'checkTest']);
 Route::get('/subjects', [SubjectController::class, 'index']);
-Route::get('/{subject}/questions', [QuestionController::class, 'index']);
+Route::get('/subjects/{subject}/questions', [QuestionController::class, 'index']);
 
 Route::get('/schools', [SchoolController::class, 'index']);
 Route::get('/schools/search', [SchoolController::class, 'search']);

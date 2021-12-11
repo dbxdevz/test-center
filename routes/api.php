@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SchoolController;
 use App\Http\Controllers\Api\ResultController;
+use App\Http\Controllers\Api\StatisticController;
 
 
 /*
@@ -21,23 +22,27 @@ use App\Http\Controllers\Api\ResultController;
 */
 
 /* Auth */
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::post('/end-test', [QuestionController::class, 'endTest']);
 Route::post('/check-test', [QuestionController::class, 'checkTest']);
-Route::get("/subjects", [SubjectController::class, 'index']);
+Route::get('/subjects', [SubjectController::class, 'index']);
 Route::get('/{subject}/questions', [QuestionController::class, 'index']);
 
-Route::get('schools', [SchoolController::class, 'index']);
-Route::get('schools/search', [SchoolController::class, 'search']);
+Route::get('/schools', [SchoolController::class, 'index']);
+Route::get('/schools/search', [SchoolController::class, 'search']);
 
-Route::post('register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('result', [ResultController::class, 'index']);
+Route::get('/result', [ResultController::class, 'index']);
+
+Route::prefix('statistic')->group(function (){
+    Route::get('/math', [StatisticController::class, 'math']);
+});
 
 /* Login user */
-Route::prefix('test')
+Route::prefix('')
     ->middleware(['auth:sanctum'])
     ->group(
         function () {

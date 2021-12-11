@@ -9,7 +9,9 @@ use App\Models\Question;
 use App\Models\Result;
 use App\Models\Statistic;
 use App\Models\Subject;
+use App\Models\Timing;
 use App\Models\Variant;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +19,15 @@ class QuestionController extends Controller
 {
     public function index(Request $request)
     {
+        $timing = Timing::where('user_id', auth('sanctum')->id())->first();
+        if($timing and Carbon::create($timing->crated_at)->addMinutes(10) < Carbon::now()){
+            return response(['message' => 'You can not start test'], 500);
+        }
+
+        Timing::create(['user_id' => auth('sanctum')->id()]);
+
         $variant = Variant::inRandomOrder()->first();
+
         $questions = Question::where('subject_id', $request->subject)
             ->with('answers:id,answer,question_id')
             ->select('id', 'question')
@@ -29,6 +39,10 @@ class QuestionController extends Controller
 
     public function endTest(Request $request)
     {
+        $timing = Timing::where('user_id', auth('sanctum')->id())->first();
+        if(Carbon::create($timing->crated_at)->addMinutes(10) < Carbon::now()){
+            return response(['message' => 'You can not start test'], 500);
+        }
 
         $answers = $request->answers;
         $variant = $request->variant;

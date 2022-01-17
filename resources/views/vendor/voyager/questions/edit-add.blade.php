@@ -92,6 +92,7 @@
                                     <input class="form-control" type="text" id="member" name="member" placeholder="Number of answers: (max. 8)" value=""><br />
                                     <a href="#" id="filldetails" onclick="addFields()">Fill Details</a>
                                     <div class="form-group col-md-12 richTextBox" id="container"/>
+
                         </div><!-- panel-body -->
 
                         <div class="panel-footer">
@@ -160,17 +161,8 @@
                 var check = document.createElement("input");
                 input.type = "textarea";
                 input.name = "member" + i;
-                if(bal2){check.type = "radio"}
-                if(bal1){check.type = "checkbox"}
+                check.type = "checkbox";
                 check.name = "answer" + i;
-
-                var additionalConfig = {
-                    selector: 'textarea.richTextBox[name="{{ "answer"}}"]',
-                }
-
-                $.extend(additionalConfig, {!! json_encode($options->tinymceOptions ?? '{}') !!})
-
-                tinymce.init(window.voyagerTinyMCE.getConfig(additionalConfig));
 
                 container.appendChild(input);
                 container.appendChild(check);

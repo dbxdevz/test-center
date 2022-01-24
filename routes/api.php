@@ -38,6 +38,8 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/status', [DoneVariantController::class, 'status']);
 
+Route::get('/avg/{subject}', [DoneVariantController::class, 'avg']);
+
 Route::prefix('statistic')->group(function (){
     Route::get('/math', [StatisticController::class, 'math']);
 });

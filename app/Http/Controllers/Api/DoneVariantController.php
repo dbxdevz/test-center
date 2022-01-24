@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DoneVariant;
 use App\Models\Question;
+use App\Models\Result;
 use App\Models\Subject;
 use App\Models\SubjectUser;
 use Illuminate\Support\Facades\DB;
@@ -42,5 +43,16 @@ class DoneVariantController extends Controller
         }
 
         return response(['data' => $data], 200);
+    }
+
+    public function avg(Request $request)
+    {
+
+        $avarage = Result::where('user_id', auth('sanctum')->id())
+            ->where('subject_id', $request->subject)
+            ->get()
+            ->avg('bal');
+
+        return response(['avarage' => $avarage], 200);
     }
 }

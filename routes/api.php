@@ -51,5 +51,6 @@ Route::prefix('')
             Route::get('/subjects', [SubjectController::class, 'index']);
             Route::get('/subjects/{subject}/questions', [QuestionController::class, 'index']);
 
+            Route::get('/ranking', [DoneVariantController::class, 'rank']);
         }
     );

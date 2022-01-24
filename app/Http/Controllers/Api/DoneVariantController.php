@@ -9,6 +9,7 @@ use App\Models\Question;
 use App\Models\Result;
 use App\Models\Subject;
 use App\Models\SubjectUser;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class DoneVariantController extends Controller
@@ -54,5 +55,19 @@ class DoneVariantController extends Controller
             ->avg('bal');
 
         return response(['avarage' => $avarage], 200);
+    }
+
+    public function rank(Request $request)
+    {
+        $users = User::where('name', 'ilike', '%' . $request->name. '%')
+            ->orWhere('last_name',  'ilike', '%' . $request->name. '%')
+            ->orWhere('middle_name',  'ilike', '%' . $request->name. '%')
+            ->select('id', 'last_name', 'name', 'middle_name', 'school_id')
+            ->with('school:id,name')
+            ->withSum('rank', 'percent')
+            ->orderBy('rank_sum_percent')
+            ->paginate(10);
+
+        return response(['users' => $users]);
     }
 }

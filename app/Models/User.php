@@ -51,4 +51,14 @@ class User extends \TCG\Voyager\Models\User
     {
         return $this->belongsToMany(Subject::class);
     }
+
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
+
+    public function rank()
+    {
+        return $this->hasMany(Result::class);
+    }
 }

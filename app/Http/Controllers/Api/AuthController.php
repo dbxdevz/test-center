@@ -21,10 +21,6 @@ class AuthController extends Controller
             return response('Credentials not match', 401);
         }
 
-        Auth::user()->session_id = Session::getId();
-
-        Auth::user()->save();
-
         return response([
             'token' => Auth::user()->createToken('API Token')->plainTextToken
         ], 200);
@@ -42,9 +38,8 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
-        $user->subjects()->attach($data['subjects']);
-
-        $user->session_id = Session::getId();
+        $user->subjects()->attach($data['first_subject']);
+        $user->subjects()->attach($data['second_subject']);
 
         $user->save();
 

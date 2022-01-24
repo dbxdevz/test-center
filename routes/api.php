@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SchoolController;
 use App\Http\Controllers\Api\ResultController;
 use App\Http\Controllers\Api\StatisticController;
+use App\Http\Controllers\Api\DoneVariantController;
 
 
 /*
@@ -35,7 +36,7 @@ Route::get('/schools/search', [SchoolController::class, 'search']);
 
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/result', [ResultController::class, 'index']);
+Route::get('/status', [DoneVariantController::class, 'status']);
 
 Route::prefix('statistic')->group(function (){
     Route::get('/math', [StatisticController::class, 'math']);
@@ -50,7 +51,6 @@ Route::prefix('')
         Route::get('/profile', function (Request $request) {
             return $request->user();
         });
-        // Question math
-        Route::get('/math', [QuestionController::class, 'math']);
+
     }
     );

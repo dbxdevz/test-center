@@ -11,22 +11,43 @@ use App\Models\Statistic;
 use App\Models\Subject;
 use App\Models\Timing;
 use App\Models\Variant;
+use App\Models\DoneVariant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
 
 class QuestionController extends Controller
 {
     public function index(Request $request)
     {
         $timing = Timing::where('user_id', auth('sanctum')->id())->first();
-        if($timing and Carbon::create($timing->crated_at)->addMinutes(10) < Carbon::now()){
+        if($timing and Carbon::create($timing->created_at)->addMinutes(10) < Carbon::now()){
             return response(['message' => 'You can not start test'], 500);
         }
 
         Timing::create(['user_id' => auth('sanctum')->id()]);
 
-        $variant = Question::where('subject_id', $request->subject_id)->select('variant_id')->inRandomOrder()->first();
+        $doneVariants = DoneVariant::where('user_id', auth('sanctum')->id())
+            ->where('subject_id', $request->subject)
+            ->select('variant_id')
+            ->pluck('variant_id');
+
+
+        $variant = Question::where('subject_id', $request->subject)
+            ->whereNotIn('variant_id', $doneVariants)
+            ->select('variant_id')
+            ->inRandomOrder()
+            ->first();
+
+        if(!$variant){
+            return response(['message' => 'All tests done on subject ' . $request->subject], 200);
+        }
+
+        DoneVariant::create([
+            'user_id' => auth('sanctum')->id(),
+            'subject_id' => $request->subject,
+            'variant_id' => $variant->variant_id
+        ]);
 
         $questions = Question::where('subject_id', $request->subject)
             ->where('variant_id', $variant->id)

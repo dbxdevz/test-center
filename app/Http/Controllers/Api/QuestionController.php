@@ -26,7 +26,7 @@ class QuestionController extends Controller
 
         Timing::create(['user_id' => auth('sanctum')->id()]);
 
-        $variant = Variant::inRandomOrder()->first();
+        $variant = Question::where('subject_id', $request->subject_id)->select('variant_id')->inRandomOrder()->first();
 
         $questions = Question::where('subject_id', $request->subject)
             ->where('variant_id', $variant->id)

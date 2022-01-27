@@ -25,6 +25,8 @@ use App\Http\Controllers\Api\DoneVariantController;
 /* Auth */
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/subjects', [SubjectController::class, 'index']);
+
 Route::get('/schools', [SchoolController::class, 'index']);
 Route::get('/schools/search', [SchoolController::class, 'search']);
 
@@ -48,7 +50,6 @@ Route::prefix('')
             Route::post('/end-test', [QuestionController::class, 'endTest']);
             Route::post('/check-test', [QuestionController::class, 'checkTest']);
 
-            Route::get('/subjects', [SubjectController::class, 'index']);
             Route::get('/subjects/{subject}/questions', [QuestionController::class, 'index']);
 
             Route::get('/ranking', [DoneVariantController::class, 'rank']);

@@ -32,7 +32,6 @@ class QuestionController extends Controller
             ->select('variant_id')
             ->pluck('variant_id');
 
-
         $variant = Question::where('subject_id', $request->subject)
             ->whereNotIn('variant_id', $doneVariants)
             ->select('variant_id')
@@ -50,12 +49,12 @@ class QuestionController extends Controller
         ]);
 
         $questions = Question::where('subject_id', $request->subject)
-            ->where('variant_id', $variant->id)
+            ->where('variant_id', $variant->variant_id)
             ->with('answers:id,answer,question_id')
             ->select('id', 'question')
             ->get();
 
-        return response(["questions" => $questions, "variant_id" => $variant->id, "subject" => $request->subject], 200);
+        return response(["questions" => $questions, "variant_id" => $variant->variant_id, "subject" => $request->subject], 200);
     }
 
     public function endTest(Request $request)

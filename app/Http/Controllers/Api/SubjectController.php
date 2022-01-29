@@ -14,6 +14,6 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        return response(['subjects' => Subject::select('id', 'subject')->get()], 200);
+        return response(Subject::select('id', 'subject')->get(), 200);
     }
 }

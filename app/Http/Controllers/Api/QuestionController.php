@@ -20,10 +20,10 @@ class QuestionController extends Controller
 {
     public function index(Request $request)
     {
-        $timing = Timing::where('user_id', auth('sanctum')->id())->first();
-        if($timing and Carbon::create($timing->created_at)->addMinutes(10) < Carbon::now()){
-            return response(['message' => 'You can not start test'], 500);
-        }
+        // $timing = Timing::where('user_id', auth('sanctum')->id())->first();
+        // if($timing and Carbon::create($timing->created_at)->addMinutes(10) < Carbon::now()){
+        //     return response(['message' => 'You can not start test'], 500);
+        // }
 
         Timing::create(['user_id' => auth('sanctum')->id()]);
 
@@ -60,10 +60,10 @@ class QuestionController extends Controller
 
     public function endTest(Request $request)
     {
-        $timing = Timing::where('user_id', auth('sanctum')->id())->first();
-        if(Carbon::create($timing->crated_at)->addMinutes(10) < Carbon::now()){
-            return response(['message' => 'You can not start test'], 500);
-        }
+        // $timing = Timing::where('user_id', auth('sanctum')->id())->first();
+        // if(Carbon::create($timing->crated_at)->addMinutes(10) < Carbon::now()){
+        //     return response(['message' => 'You can not start test'], 500);
+        // }
 
         $answers = $request->answers;
         $variant = $request->variant;

@@ -52,7 +52,7 @@ class QuestionController extends Controller
             ->where('variant_id', $variant->variant_id)
             ->with('answers:id,answer,question_id')
             ->select('id', 'question')
-            ->paginate(2);
+            ->get();
 
         return response(["questions" => $questions, "variant_id" => $variant->name, "subject" => $request->subject], 200);
     }

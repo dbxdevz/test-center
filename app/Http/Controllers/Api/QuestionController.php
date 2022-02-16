@@ -33,6 +33,7 @@ class QuestionController extends Controller
             ->pluck('variant_id');
 
         $variant = Question::where('subject_id', $request->subject)
+            ->where('deleted_at', null)
             ->whereNotIn('variant_id', $doneVariants)
             ->select('variant_id')
             ->inRandomOrder()

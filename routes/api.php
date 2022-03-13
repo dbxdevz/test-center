@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\SchoolController;
 use App\Http\Controllers\Api\ResultController;
 use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\DoneVariantController;
-
+use App\Models\DoneVariant;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,5 +53,7 @@ Route::prefix('')
             Route::get('/subjects/{subject}/questions', [QuestionController::class, 'index']);
 
             Route::get('/ranking', [DoneVariantController::class, 'rank']);
+
+            Route::get('/total-avg', [DoneVariantController::class, 'totalAvg']);
         }
     );

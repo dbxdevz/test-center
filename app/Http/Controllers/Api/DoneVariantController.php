@@ -57,6 +57,27 @@ class DoneVariantController extends Controller
         return response(['avarage' => $avarage], 200);
     }
 
+    public function totalAvg()
+    {
+        /* пройдены ли тесты по каждому уроку
+         * если нет отправляем что нельзя получить ответ */
+        $allSubjectsNum = SubjectUser::where('user_id', auth('sanctum')->id())->count();
+
+        $passedSubjectsNum = Result::where('user_id', auth('sanctum')->id())
+            ->select('subject_id')->distinct()->count();
+
+        if($allSubjectsNum != $passedSubjectsNum){
+            return response(['message' => 'You have to pass all subjects at least ones'], 418);
+        }
+
+        /* отправка ср.балла по всем урокам */
+        $avg = Result::where('user_id', auth('sanctum')->id())
+            ->get()
+            ->avg('bal');
+
+        return response(['totalAvg' => $avg], 200);
+    }
+
     public function rank(Request $request)
     {
         $users = User::where('name', 'ilike', '%' . $request->name. '%')

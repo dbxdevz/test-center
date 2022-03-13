@@ -64,7 +64,7 @@ class DoneVariantController extends Controller
         $allSubjectsNum = SubjectUser::where('user_id', auth('sanctum')->id())->count();
 
         $passedSubjectsNum = Result::where('user_id', auth('sanctum')->id())
-            ->select('subject_id')->distinct()->count();
+            ->select('subject_id')->distinct()->get()->count();
 
         if($allSubjectsNum != $passedSubjectsNum){
             return response(['message' => 'You have to pass all subjects at least ones'], 418);

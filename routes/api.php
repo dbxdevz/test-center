@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ResultController;
 use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\DoneVariantController;
 use App\Models\DoneVariant;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +40,9 @@ Route::prefix('')
         function () {
             // Profile
             Route::get('/profile', function (Request $request) {
-                return $request->user();
+                $user = User::where('id', auth('sanctum')->id())->with('school')->first();
+
+                return response(['user' => $user], 200);
             });
 
             Route::get('/status', [DoneVariantController::class, 'status']);

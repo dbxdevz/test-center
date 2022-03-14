@@ -143,6 +143,7 @@
 
 @section('javascript')
     @push('javascript')
+    <script src="https://cdn.tiny.cloud/1/idqfk0ig0yc4d689hzmf6mungksdx28xfvcj7xrl3a0ysicc/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <script type='text/javascript'>
         function addFields(){
             // Number of inputs to create
@@ -170,6 +171,13 @@
                 container.appendChild(document.createElement("br"));
             }
         }
+    </script>
+    <script>
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+        toolbar_mode: 'floating',
+    });
     </script>
     @endpush
     <script>

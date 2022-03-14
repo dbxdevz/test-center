@@ -40,7 +40,10 @@ Route::prefix('')
         function () {
             // Profile
             Route::get('/profile', function (Request $request) {
-                $user = User::where('id', auth('sanctum')->id())->with('school')->first();
+                $user = User::where('id', auth('sanctum')->id())
+                    ->with('school')
+                    ->select('id', 'name', 'last_name', 'middle_name', 'school_id', 'phone_number', 'email')
+                    ->first();
 
                 return response(['user' => $user], 200);
             });

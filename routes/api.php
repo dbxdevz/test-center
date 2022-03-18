@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\SchoolController;
 use App\Http\Controllers\Api\ResultController;
 use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\DoneVariantController;
+use App\Http\Controllers\Api\UserController;
 use App\Models\DoneVariant;
 use App\Models\User;
 
@@ -47,6 +48,8 @@ Route::prefix('')
 
                 return response(['user' => $user], 200);
             });
+
+            Route::put('/update/profile', [UserController::class, 'update']);
 
             Route::get('/status', [DoneVariantController::class, 'status']);
             Route::get('/avg/{subject}', [DoneVariantController::class, 'avg']);

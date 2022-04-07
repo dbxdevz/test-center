@@ -124,6 +124,9 @@ class QuestionController extends Controller
             }
 
             if($data[$last_key]['correct'] == 0){
+
+
+
                 return response(['result' => $data, 'bals' => 0, 'total_bals' => $total_bals], 200);
             }
 

@@ -70,6 +70,7 @@ class QuestionController extends Controller
         $subject = $request->subject;
 
         foreach ($answers as $answer) {
+            dd($answer);
             AnswersUser::createOrUpdate(['user_id' => auth('sanctum')->id(), 'variant_id' => $variant], [
                 'user_id' => auth('sanctum')->id(),
                 'answer_id' => $answer['answer'],
@@ -90,6 +91,10 @@ class QuestionController extends Controller
             ->where('subject_id', $subject)
             ->with('correctAnswers')
             ->get();
+
+        if(!$questions){
+            return response(['message' => 'Not found questions'], 204);
+        }
         $total_bals = 0;
         foreach ($questions as $question) {
             $answersUser = AnswersUser::where('user_id', auth('sanctum')->id())
@@ -205,7 +210,7 @@ class QuestionController extends Controller
         $bronze -= $silver * 10;
         $silver -= $gold * 5;
 
-        Statistic::updateOrCreate(['user_id' => 1, 'type' => $subject], [
+        Statistic::updateOrCreate(['user_id' => auth('sanctum')->id(), 'type' => $subject], [
             'percent' => $statPercent,
             'bronze' => $bronze,
             'silver' => $silver,

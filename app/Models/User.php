@@ -61,4 +61,9 @@ class User extends \TCG\Voyager\Models\User
     {
         return $this->hasMany(Result::class);
     }
+
+    public function statistic()
+    {
+        return $this->hasMany(Statistic::class);
+    }
 }

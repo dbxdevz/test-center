@@ -84,7 +84,7 @@ class DoneVariantController extends Controller
             ->orWhere('last_name',  'ilike', '%' . $request->name. '%')
             ->orWhere('middle_name',  'ilike', '%' . $request->name. '%')
             ->select('id', 'last_name', 'name', 'middle_name', 'school_id')
-            ->with('school:id,name')
+            ->with(['school:id,name', 'statistic'])
             ->withSum('rank', 'percent')
             ->orderBy('rank_sum_percent')
             ->paginate(10);

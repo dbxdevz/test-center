@@ -123,6 +123,10 @@ class QuestionController extends Controller
                 }
             }
 
+            if($data[$last_key]['correct'] == 0){
+                return response(['result' => $data, 'bals' => 0, 'total_bals' => $total_bals], 200);
+            }
+
             $correct_procent = $data[$last_key]['correct'] / $question->correctAnswers->count() * 100;
 
             if ($data[$last_key]['incorrect'] == 0 && $correct_procent == 100) {

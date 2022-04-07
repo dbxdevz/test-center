@@ -70,7 +70,7 @@ class QuestionController extends Controller
         $subject = $request->subject;
 
         foreach ($answers as $answer) {
-            AnswersUser::createOrUpdate(['user_id' => auth('sanctum')->id(), 'variant_id' => $variant], [
+            AnswersUser::updateOrCreate(['user_id' => auth('sanctum')->id(), 'variant_id' => $variant], [
                 'user_id' => auth('sanctum')->id(),
                 'answer_id' => $answer['answer'],
                 'question_id' => $answer['question'],

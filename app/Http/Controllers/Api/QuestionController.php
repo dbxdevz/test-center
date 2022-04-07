@@ -75,6 +75,7 @@ class QuestionController extends Controller
                 'answer_id' => $answer['answer'],
                 'question_id' => $answer['question'],
                 'variant_id' => $variant,
+                'subject_id' => $subject,
             ]);
         }
 

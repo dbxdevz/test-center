@@ -69,7 +69,7 @@ class QuestionController extends Controller
         $variant = $request->variant;
         $subject = $request->subject;
 
-        dd(request()->body());
+        dd($request->body);
 
         foreach ($answers as $answer) {
             AnswersUser::createOrUpdate(['user_id' => auth('sanctum')->id(), 'variant_id' => $variant], [

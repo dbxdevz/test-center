@@ -19,9 +19,6 @@ class QuestionController extends VoyagerBaseController
 
         // Check permission
         $this->authorize('add', app($dataType->model_name));
-        // Validate fields with ajax
-        $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
-        $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
 
         // проверка кол-ства правильных ответов
         // должен быть хотя бы один правильный ответ
@@ -37,6 +34,9 @@ class QuestionController extends VoyagerBaseController
         if (!$isAtLeastOneCorrect) {
             return redirect()->back();
         }
+        // Validate fields with ajax
+        $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
+        $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
 
         for ($i = (int)$request->member - 1; $i >= 0; $i--) {
             $mem = 'member' . $i;

@@ -35,7 +35,7 @@ class QuestionController extends VoyagerBaseController
         }
 
         if (!$isAtLeastOneCorrect) {
-            $redirect = redirect()->back(['errors' => 'arman darmesh']);
+            $redirect = redirect()->back();
         }
 
         for ($i = (int)$request->member - 1; $i >= 0; $i--) {

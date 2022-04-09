@@ -93,6 +93,8 @@
                                     <a href="#" id="filldetails" onclick="addFields()">Fill Details</a>
                                     <div class="form-group col-md-12 richTextBox" id="container"/>
 
+                                    <h3>Не забудьте указать правильные ответы, иначе все заполненные данные сотрутся!!!</h3>
+
                         </div><!-- panel-body -->
 
                         <div class="panel-footer">

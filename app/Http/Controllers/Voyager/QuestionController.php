@@ -28,9 +28,6 @@ class QuestionController extends VoyagerBaseController
         $isAtLeastOneCorrect = false;
         for ($i = (int)$request->member - 1; $i >= 0; $i--) {
             $check = 'answer' . $i;
-            $request->validate([
-               $check => ['required'],
-            ]);
             if($request->$check){
                 $isAtLeastOneCorrect = true;
                 break;

@@ -23,6 +23,24 @@ class QuestionController extends VoyagerBaseController
         $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
         $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
 
+        // проверка кол-ства правильных ответов
+        // должен быть хотя бы один правильный ответ
+        $isAtLeastOneCorrect = false;
+        for ($i = (int)$request->member - 1; $i >= 0; $i--) {
+            $check = 'answer' . $i;
+            $request->validate([
+               $check => ['required'],
+            ]);
+            if($request->$check){
+                $isAtLeastOneCorrect = true;
+                break;
+            }
+        }
+
+        if (!$isAtLeastOneCorrect) {
+            $redirect = redirect()->back(['errors' => 'arman darmesh']);
+        }
+
         for ($i = (int)$request->member - 1; $i >= 0; $i--) {
             $mem = 'member' . $i;
             $check = 'answer' . $i;

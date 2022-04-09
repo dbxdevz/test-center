@@ -123,8 +123,6 @@ class QuestionController extends Controller
                 }
             }
 
-            dd($question->correctAnswers->count());
-
             $correct_procent = $data[$last_key]['correct'] / $question->correctAnswers->count() * 100;
 
             if ($data[$last_key]['incorrect'] == 0 && $correct_procent == 100) {

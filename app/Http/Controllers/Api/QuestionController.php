@@ -55,7 +55,7 @@ class QuestionController extends Controller
             ->select('id', 'question')
             ->get();
 
-        return response(["questions" => $questions, "variant_id" => $variant->name, "subject" => $request->subject], 200);
+        return response(["questions" => $questions, "variant_id" => $variant->variant_id, "subject" => $request->subject], 200);
     }
 
     public function endTest(Request $request)

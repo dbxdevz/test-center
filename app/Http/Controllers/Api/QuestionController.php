@@ -198,7 +198,7 @@ class QuestionController extends Controller
         }
         $statPercent = 0;
 
-        $percents = Result::where('user_id', 1)->where('type', $subject)->select('id','percent')->get();
+        $percents = Result::where('user_id', auth()->id())->where('type', $subject)->select('id','percent')->get();
         foreach ($percents as $percent){
             $statPercent += $percent->percent;
         }

@@ -17,7 +17,7 @@ class CreateStatisticsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('type');
-            $table->integer('percent')->default(0);
+            $table->double('percent')->default(0);
             $table->integer('bronze')->default(0);
             $table->integer('silver')->default(0);
             $table->integer('gold')->default(0);

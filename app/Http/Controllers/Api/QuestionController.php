@@ -64,14 +64,14 @@ class QuestionController extends Controller
         // if(Carbon::create($timing->crated_at)->addMinutes(10) < Carbon::now()){
         //     return response(['message' => 'You can not start test'], 500);
         // }
-
+        $request->validate([
+            'answers' => ['required'],
+            'variant' => ['required'],
+            'subject' => ['required'],
+        ]);
         $answers = $request->answers;
         $variant = $request->variant;
         $subject = $request->subject;
-
-        Log::info($answers);
-        Log::info($variant);
-        Log::info($subject);
 
         foreach ($answers as $answer) {
             AnswersUser::updateOrCreate(['user_id' => auth('sanctum')->id(), 'question_id' => $answer['question']], [

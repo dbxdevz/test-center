@@ -14,7 +14,7 @@ use App\Models\Variant;
 use App\Models\DoneVariant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 
 class QuestionController extends Controller
 {
@@ -68,6 +68,10 @@ class QuestionController extends Controller
         $answers = $request->answers;
         $variant = $request->variant;
         $subject = $request->subject;
+
+        Log::error("answers:", $answers);
+        Log::error("variant:", $variant);
+        Log::error("subject:", $subject);
 
         foreach ($answers as $answer) {
             AnswersUser::updateOrCreate(['user_id' => auth('sanctum')->id(), 'question_id' => $answer['question']], [

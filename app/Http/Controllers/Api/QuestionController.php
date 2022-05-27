@@ -69,9 +69,9 @@ class QuestionController extends Controller
         $variant = $request->variant;
         $subject = $request->subject;
 
-        Log::error("answers:", $answers);
-        Log::error("variant:", $variant);
-        Log::error("subject:", $subject);
+        Log::info($answers);
+        Log::info($variant);
+        Log::info($subject);
 
         foreach ($answers as $answer) {
             AnswersUser::updateOrCreate(['user_id' => auth('sanctum')->id(), 'question_id' => $answer['question']], [
